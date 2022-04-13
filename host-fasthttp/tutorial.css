@@ -1,0 +1,14 @@
+h2:before {
+    content:"¶ ";
+    color:lightgray
+  }
+  
+  .underline {
+    text-decoration: underline;
+    text-decoration-color: red;
+  }
+  
+  h2 ~ p {
+    text-indent: -1em;
+    margin-left: 1em;
+  }
