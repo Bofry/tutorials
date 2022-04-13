@@ -25,7 +25,7 @@
 
 ⠿ 使用 *host-fasthttp* 開發的應用程式，所使用的 Host 引擎是以 [*valyala/fasthttp*](https://github.com/valyala/fasthttp) 為主體，這個引擎由 *host-fasthttp* 的 `Host` 型別包裝；同時 *host-fasthttp* 亦提供 `Init()` 方法，作為應用程式配置所需的服務設定，比如：通訊埠、服務監聽位址、服務名稱、是否啟用*HTTP*壓縮……等。
 
-⠿ 我們可以在章節 «[01 01 使用 host-fasthttp 快速建構你的第一個 Web API](01_QUICK_START.md)» 的專案中的 **internal/appContext.go** 的內容找到 **Host.Init()** 方法中配置 Host 服務基礎設定。這個實作的方法，由已完成繫結的 **Config** 物件來，進行 **Host** 物件的配置。
+⠿ 我們可以在章節 «[01 使用 host-fasthttp 快速建構你的第一個 Web API](01_QUICK_START.md)» 的專案中的 **internal/appContext.go** 的內容找到 **Host.Init()** 方法中配置 Host 服務基礎設定。這個實作的方法，由已完成繫結的 **Config** 物件來，進行 **Host** 物件的配置。
 
 > 💾 **internal/appContext.go**
 > ```go
@@ -54,7 +54,7 @@
 > --------
 > 🐾 有關 `fasthttp.Server` 的欄位與說明參考：https://pkg.go.dev/github.com/valyala/fasthttp#Server
 >
-> ✋ <span class="remind">這些 *fasthttp.Server* 設定值<span class="underline">**不保證 *host-fasthttp* 的功能正常運作**</span>，若非得使用時需要特別注意。下列 *fasthttp.Server* 的設定盡量避免使用：</span>
+> ✋ <span class="remind">下面 *fasthttp.Server* 設定值<span class="underline">**不保證 *host-fasthttp* 的功能正常運作**</span>，若非得使用時需要特別注意。下列 *fasthttp.Server* 的設定盡量避免使用：</span>
 > - `fasthttp.Server.Handler`<br/>
 >   這個設定可能導致 *host-fasthttp* 的 **UseResourceManager**、**UseLogging**、**UseXHttpMethod**……等，涉及 *RouteTable* 相關的功能無作用。
 > - `fasthttp.Server.ErrorHandler`<br/>
