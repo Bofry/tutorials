@@ -9,7 +9,7 @@
 🎯 本節使用 `Host.Init()` 以及 *config.yaml* 來配置 **Host** 服務各種執行環境設定。你將會掌握：
 
   1. 如何使用 `Host.Init()` 進行 Host 服務配置
-  2. 認識在 Config 以及 config.yaml 中，與 Host 有關的設定
+  2. 認識 Config、config.yaml 與 Host 有關的設定
   3. 環境變數與多環境部署設定
   4. 了解如何用不同的啟動方式來指定 Host 配置
 
