@@ -30,14 +30,14 @@
 > 💾 **internal/appContext.go**
 > ```go
 > func (h *Host) Init(conf *Config) {
-> 	h.Server = &fasthttp.Server{
-> 		Name:                          conf.ServerName,
-> 		DisableKeepalive:              true,
-> 		DisableHeaderNamesNormalizing: true,
-> 	}
-> 	h.ListenAddress = conf.ListenAddress
-> 	h.EnableCompress = conf.EnableCompress
-> 	h.Version = conf.Version
+>   h.Server = &fasthttp.Server{
+>     Name:                          conf.ServerName,
+>     DisableKeepalive:              true,
+>     DisableHeaderNamesNormalizing: true,
+>   }
+>   h.ListenAddress = conf.ListenAddress
+>   h.EnableCompress = conf.EnableCompress
+>   h.Version = conf.Version
 > }
 > ```
 >
@@ -71,14 +71,14 @@
 
 > 💾 **internal/appContext.go**
 > ```go
-> 	Config struct {
-> 		// host-fasthttp server configuration
-> 		ListenAddress  string `yaml:"address"        arg:"address;the combination of IP address and listen port"`
-> 		EnableCompress bool   `yaml:"useCompress"    arg:"use-compress;indicates the response enable compress or not"`
-> 		ServerName     string `yaml:"serverName"`
-> 		Version        string `resource:".VERSION"`
+>   Config struct {
+>     // host-fasthttp server configuration
+>     ListenAddress  string `yaml:"address"        arg:"address;the combination of IP address and listen port"`
+>     EnableCompress bool   `yaml:"useCompress"    arg:"use-compress;indicates the response enable compress or not"`
+>     ServerName     string `yaml:"serverName"`
+>     Version        string `resource:".VERSION"`
 > 
-> 		...
+>     ...
 > ```
 >
 > ⠿ **在 Config 型別中找到與 Host 有關的欄位：**
@@ -158,28 +158,28 @@
 > 💾 **app.go**
 > ```go
 > func main() {
-> 	ctx := AppContext{}
-> 	fasthttp.Startup(&ctx).
-> 		Middlewares(
-> 			fasthttp.UseResourceManager(&ResourceManager{}),
-> 			fasthttp.UseXHttpMethodHeader(),
-> 		).
-> 		ConfigureConfiguration(func(service *config.ConfigurationService) {
-> 			service.
-> 			// 載入 `config.yaml`
-> 			LoadYamlFile("config.yaml").
-> 			// 搭配`${Environment}`環境變數載入, 例：`config.local.yaml`
-> 			LoadYamlFile("config.${Environment}.yaml").
-> 			// 根據輸入參數載入環境變數
-> 			LoadEnvironmentVariables("").
-> 			// 根據輸入路徑參數尋找資源檔案內容
-> 			LoadResource(".").
-> 			// 根據輸入路徑參數尋找資源檔案內容
-> 			LoadResource(".conf/${Environment}").
-> 			// 載入命令啟動列的參數
-> 			LoadCommandArguments()
-> 		}).
-> 		Run()
+>   ctx := AppContext{}
+>   fasthttp.Startup(&ctx).
+>     Middlewares(
+>       fasthttp.UseResourceManager(&ResourceManager{}),
+>       fasthttp.UseXHttpMethodHeader(),
+>     ).
+>     ConfigureConfiguration(func(service *config.ConfigurationService) {
+>       service.
+>       // 載入 `config.yaml`
+>       LoadYamlFile("config.yaml").
+>       // 搭配`${Environment}`環境變數載入, 例：`config.local.yaml`
+>       LoadYamlFile("config.${Environment}.yaml").
+>       // 根據輸入參數載入環境變數
+>       LoadEnvironmentVariables("").
+>       // 根據輸入路徑參數尋找資源檔案內容
+>       LoadResource(".").
+>       // 根據輸入路徑參數尋找資源檔案內容
+>       LoadResource(".conf/${Environment}").
+>       // 載入命令啟動列的參數
+>       LoadCommandArguments()
+>     }).
+>     Run()
 > }
 > ```
 > 可見其載入原則為：

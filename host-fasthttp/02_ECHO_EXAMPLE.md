@@ -68,18 +68,18 @@
     // 查詢字串使用 tag:`query`，`*`表示必填。
     Voice string `query:"*VOICE"`
     // 請求內容使用 tag:`json`，`*`表示必填。
-  	Yell  string `json:"*yell"`
+    Yell  string `json:"*yell"`
   }
 
   // 此為使用 httparg.Validate() 所呼叫建立的參數驗證方法
   func (args *EchoArgs) Validate() error {
-  	err := assert.Assert(
+    err := assert.Assert(
       // 輸入參數 Voice 不得為空字串。
       assert.NonEmptyString(args.Voice, "voice"),
       // 輸入參數 Yell 不得為空字串。
-  		assert.NonEmptyString(args.Yell, "yell"),
-  	)
-  	return err
+      assert.NonEmptyString(args.Yell, "yell"),
+    )
+    return err
   }
   ```
 
@@ -91,20 +91,20 @@
   package resource
   
   import (
-  	. "apiservice/resource/args"
-  	"github.com/Bofry/host-fasthttp/response"
-  	"github.com/Bofry/httparg"
-  	"github.com/valyala/fasthttp"
+    . "apiservice/resource/args"
+    "github.com/Bofry/host-fasthttp/response"
+    "github.com/Bofry/httparg"
+    "github.com/valyala/fasthttp"
   )
   
   type DefaultResource struct{}
   
   func (r *DefaultResource) Ping(ctx *fasthttp.RequestCtx) {
-  	response.Success(ctx, "text/plain", []byte("PONG"))
+    response.Success(ctx, "text/plain", []byte("PONG"))
   }
   
   func (r *DefaultResource) Echo(ctx *fasthttp.RequestCtx) {
-  	args := EchoArgs{}
+    args := EchoArgs{}
   
     httparg.Args(&args).
       // 使用 ProcessQueryString 處理輸入的請求參數
@@ -115,9 +115,9 @@
       Validate()
       
     // 輸入參數字串串接
-  	str := args.Voice + args.Yell
+    str := args.Voice + args.Yell
   
-  	response.Success(ctx, "text/plain", []byte(str))
+    response.Success(ctx, "text/plain", []byte(str))
   }
   ```
 

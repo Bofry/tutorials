@@ -62,30 +62,30 @@
   package model
   
   import (
-  	"encoding/json"
-  	"fmt"
+    "encoding/json"
+    "fmt"
   )
   
   type PostTranslateResult struct {
-  	Translation string `json:"translation"`
+    Translation string `json:"translation"`
   }
   
   func (p *PostTranslateResult) UnmarshalJSON(data []byte) error {
-  	// raw_data = [[["illustrate","說明",null,null,10]],null,"zh-CN",null,null,null,null,[]]
-  	var tmp []interface{}
-  	err := json.Unmarshal(data, &tmp)
-  	if err != nil {
-  		return err
-  	}
-  	if v, ok := tmp[0].([]interface{}); ok {
-  		if vv, ok := v[0].([]interface{}); ok {
-  			if str, ok := vv[0].(string); ok {
-  				p.Translation = str
-  				return nil
-  			}
-  		}
-  	}
-  	return fmt.Errorf("can't unmarshal translation")
+    // raw_data = [[["illustrate","說明",null,null,10]],null,"zh-CN",null,null,null,null,[]]
+    var tmp []interface{}
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+      return err
+    }
+    if v, ok := tmp[0].([]interface{}); ok {
+      if vv, ok := v[0].([]interface{}); ok {
+        if str, ok := vv[0].(string); ok {
+          p.Translation = str
+          return nil
+        }
+      }
+    }
+    return fmt.Errorf("can't unmarshal translation")
   }
   ```
 
@@ -103,58 +103,58 @@
   package provider
   
   import (
-  	"apiservice/model"
-  	"encoding/json"
-  	"errors"
-  	"fmt"
-  	"github.com/valyala/fasthttp"
-  	"net/url"
-  	"time"
+    "apiservice/model"
+    "encoding/json"
+    "errors"
+    "fmt"
+    "github.com/valyala/fasthttp"
+    "net/url"
+    "time"
   )
   
   type GoogleTranslateProvider struct {
   }
   
   func NewGoogleTranslateProvider() *GoogleTranslateProvider {
-  	r := &GoogleTranslateProvider{}
-  	return r
+    r := &GoogleTranslateProvider{}
+    return r
   }
   
   func (p *GoogleTranslateProvider) PostTranslate(
-  	sourceLanguage string,
-  	targetLanguage string,
-  	content string) (*model.PostTranslateResult, error) {
+    sourceLanguage string,
+    targetLanguage string,
+    content string) (*model.PostTranslateResult, error) {
   
-  	req := fasthttp.AcquireRequest()
-  	resp := fasthttp.AcquireResponse()
-  	defer fasthttp.ReleaseRequest(req)
-  	defer fasthttp.ReleaseResponse(resp)
-  	
-  	url := fmt.Sprintf("https://translate.google.com/translate_a/single?client=at&sl=%s&tl=%s&dt=t&q=%s", sourceLanguage,   targetLanguage, url.QueryEscape(content))
-  	req.SetRequestURI(url)
-  	req.Header.SetMethod("POST")
+    req := fasthttp.AcquireRequest()
+    resp := fasthttp.AcquireResponse()
+    defer fasthttp.ReleaseRequest(req)
+    defer fasthttp.ReleaseResponse(resp)
+
+    url := fmt.Sprintf("https://translate.google.com/translate_a/single?client=at&sl=%s&tl=%s&dt=t&q=%s", sourceLanguage,   targetLanguage, url.QueryEscape(content))
+    req.SetRequestURI(url)
+    req.Header.SetMethod("POST")
   
-  	client := &fasthttp.Client{}
+    client := &fasthttp.Client{}
   
-  	req.SetBody([]byte(content))
-  	err := client.DoTimeout(req, resp, 3*time.Second)
-  	if err != nil {
-  		return nil, err
-  	}
+    req.SetBody([]byte(content))
+    err := client.DoTimeout(req, resp, 3*time.Second)
+    if err != nil {
+      return nil, err
+    }
   
-  	bodyBytes := resp.Body()
-  	if resp.StatusCode() != 200 {
-  		return nil, errors.New(string(bodyBytes))
-  	}
+    bodyBytes := resp.Body()
+    if resp.StatusCode() != 200 {
+      return nil, errors.New(string(bodyBytes))
+    }
   
-  	result := &model.PostTranslateResult{}
-  	err = json.Unmarshal(bodyBytes, &result)
+    result := &model.PostTranslateResult{}
+    err = json.Unmarshal(bodyBytes, &result)
     
-  	if err != nil {
-  		return nil, err
-  	}
+    if err != nil {
+      return nil, err
+    }
   
-  	return result, nil
+    return result, nil
   }
   ```
 
@@ -169,21 +169,21 @@
       更改為：
       ```go
       ServiceProvider struct {
-      	GoogleTranslateProvider *provider.GoogleTranslateProvider
+        GoogleTranslateProvider *provider.GoogleTranslateProvider
       }
       ```
       > 💬 這個動作用於將 `GoogleTranslateProvider` 注入到 `ServiceProvider` 中。
   3. 找到第43行，
       ```go
       func (p *ServiceProvider) Init(conf *Config) {
-      	// initialize service provider components
+        // initialize service provider components
       }
       ```
       更改為：
       ```go
       func (p *ServiceProvider) Init(conf *Config) {
-      	// initialize service provider components
-      	p.GoogleTranslateProvider = provider.NewGoogleTranslateProvider()
+        // initialize service provider components
+        p.GoogleTranslateProvider = provider.NewGoogleTranslateProvider()
       }
       ```
       > 💬 這個動作是建立 `GoogleTranslateProvider` 實例並設定於 `ServiceProvider` 中的 `GoogleTranslateProvider`。
@@ -248,37 +248,37 @@
   package resource
   
   import (
-  	"encoding/json"
-  	"github.com/Bofry/host-fasthttp/response"
-  	"github.com/Bofry/httparg"
-  	"github.com/valyala/fasthttp"
+    "encoding/json"
+    "github.com/Bofry/host-fasthttp/response"
+    "github.com/Bofry/httparg"
+    "github.com/valyala/fasthttp"
   
-  	. "apiservice/internal"
-  	. "apiservice/resource/args"
+    . "apiservice/internal"
+    . "apiservice/resource/args"
   )
   
   type TranslateResource struct {
     // 此處使用 `Dependency Injection` 方式注入。
-  	ServiceProvider *ServiceProvider
+    ServiceProvider *ServiceProvider
   }
   
   func (r *TranslateResource) Ping(ctx *fasthttp.RequestCtx) {
-  	response.Success(ctx, "text/plain", []byte("PONG"))
+    response.Success(ctx, "text/plain", []byte("PONG"))
   }
   
   func (r *TranslateResource) Get(ctx *fasthttp.RequestCtx) {
-  	args := PostTranslateArgs{}
+    args := PostTranslateArgs{}
   
-  	httparg.Args(&args).
-  		ProcessQueryString(ctx.QueryArgs().String()).
-  		ProcessContent(ctx.PostBody(), "application/json").
-  		Validate()
+    httparg.Args(&args).
+      ProcessQueryString(ctx.QueryArgs().String()).
+      ProcessContent(ctx.PostBody(), "application/json").
+      Validate()
   
     // 呼叫依賴注入的 `ServiceProvider` 內的 `GoogleTranslate.PostTranslate` 的方法。
-  	rsp, _ := r.ServiceProvider.GoogleTranslateProvider.PostTranslate(args.SourceLanguage, args.TargetLanguage, args.Content)
+    rsp, _ := r.ServiceProvider.GoogleTranslateProvider.PostTranslate(args.SourceLanguage, args.TargetLanguage, args.Content)
   
-  	body, _ := json.Marshal(rsp)
-  	response.Success(ctx, "text/plain", body)
+    body, _ := json.Marshal(rsp)
+    response.Success(ctx, "text/plain", body)
   }
   ```
 
